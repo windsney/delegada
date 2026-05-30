@@ -1,15 +1,17 @@
 from django.urls import path
-from .views import HomeView
+from . import views
 
 urlpatterns = [
-    #path('', views.home, name='home'),
+    path('painel', views.painel_escala, name='painel_escala'),
+    path('', views.visualizacao_escala, name='visualizacao_escala'), # Nova rota
+    path('militares/', views.cadastrar_policial, name='cadastrar_policial'),
     #path('sobre/', views.sobre, name='sobre'),
     #path('contato/', views.contato, name='contato'),
 # CBV básica
     #path('minhaview/', MinhaView.as_view(), name='minha-view'),
     
     # TemplateView
-    path('', HomeView.as_view(), name='home'),
+    #path('', HomeView.as_view(), name='home'),
     
     # ListView
     #path('itens/', ListaItensView.as_view(), name='lista-itens'),

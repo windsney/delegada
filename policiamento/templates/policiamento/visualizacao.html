@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala de Serviço - Atividade Delegada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 font-sans">
+
+    <div class="max-w-2xl mx-auto p-4">
+        <div class="text-center mb-8 border-b-2 border-blue-900 pb-4">
+            <h1 class="text-xl font-bold text-blue-900 uppercase">Polícia Militar de Mato Grosso</h1>
+            <h2 class="text-lg font-semibold text-gray-700">Comando Regional de Rondonópolis</h2>
+            <div class="mt-4 bg-blue-900 text-white py-2 px-4 rounded-full inline-block font-medium text-sm tracking-wide">
+                Atividade Delegada — Cartão Programa
+            </div>
+        </div>
+
+        {% if escala %}
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6 text-center">
+            <p class="text-slate-500 text-sm uppercase tracking-wider font-bold">Data do Serviço</p>
+            <p class="text-2xl font-black text-slate-800">{{ escala.data|date:"d/m/Y" }}</p>
+            <div class="flex justify-center gap-4 mt-2 text-slate-600 font-medium">
+                <span>Início: {{ escala.horario_inicio|time:"H:i" }}</span>
+                <span>•</span>
+                <span>Fim: {{ escala.horario_fim|time:"H:i" }}</span>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            {% for cartao in cartoes %}
+                {% if cartao.comandante %} <div class="bg-white rounded-xl shadow-md border-l-8 border-blue-700 p-4">
+                    <h3 class="text-lg font-bold text-blue-900 mb-3 border-b pb-1">
+                        {{ cartao.ponto_fixo.nome }}
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 gap-2">
+                        <div class="flex items-center">
+                            <span class="w-24 text-xs font-bold text-slate-400 uppercase">Comandante:</span>
+                            <span class="font-bold text-slate-800 text-lg">{{ cartao.comandante.nome_guerra }}</span>
+                        </div>
+                        
+                        {% if cartao.motorista %}
+                        <div class="flex items-center">
+                            <span class="w-24 text-xs font-bold text-slate-400 uppercase">Motorista:</span>
+                            <span class="font-medium text-slate-700">{{ cartao.motorista.nome_guerra }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if cartao.patrulheiro %}
+                        <div class="flex items-center">
+                            <span class="w-24 text-xs font-bold text-slate-400 uppercase">Patrulheiro:</span>
+                            <span class="font-medium text-slate-700">{{ cartao.patrulheiro.nome_guerra }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            {% empty %}
+            <div class="text-center py-10 bg-white rounded-xl border border-slate-200">
+                <p class="text-slate-500">Nenhum policial escalado para este turno ainda.</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="mt-8 text-center text-slate-400 text-xs">
+            Gerado automaticamente em: {% now "d/m/Y H:i" %} | Sistema Delegada
+        </div>
+
+        {% else %}
+        <div class="text-center py-20 bg-white rounded-xl border border-slate-200">
+            <p class="text-slate-500 font-medium">Nenhuma escala cadastrada no momento.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="fixed bottom-4 right-4 print:hidden">
+        <a href="{% url 'painel_escala' %}" class="bg-slate-800 text-white p-3 rounded-full shadow-lg opacity-40 hover:opacity-100 transition-opacity block">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
+    </div>
+
+</body>
+</html>

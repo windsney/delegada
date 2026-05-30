@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Gestão - Atividade Delegada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen p-6">
+
+    <div class="container mx-auto max-w-6xl">
+        <div class="bg-blue-900 text-white p-6 rounded-lg shadow-md mb-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">SISTEMA DE ATIVIDADE DELEGADA</h1>
+                <p class="text-sm text-blue-200">Rondonópolis/MT</p>
+            </div>
+            <div class="flex gap-2">
+                <a href="{% url 'cadastrar_policial' %}" class="bg-blue-700 hover:bg-blue-600 font-bold py-2 px-4 rounded text-sm shadow">Gerenciar Efetivo</a>
+                <a href="{% url 'visualizacao_escala' %}" target="_blank" class="bg-gray-800 hover:bg-gray-700 font-bold py-2 px-4 rounded text-sm shadow">Ver Espelho da Escala</a>
+            </div>
+        </div>
+
+        {% if escala %}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
+                <span class="text-xs font-bold text-gray-400 uppercase">Duração do Turno</span>
+                <p class="text-2xl font-black text-gray-800">{{ horas_turno|floatformat:1 }} Horas</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-green-500">
+                <span class="text-xs font-bold text-gray-400 uppercase">Previsão de Custo do Turno</span>
+                <p class="text-2xl font-black text-green-600">R$ {{ custo_total|floatformat:2 }}</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow border-l-4 border-yellow-500">
+                <span class="text-xs font-bold text-gray-400 uppercase">Data Publicada</span>
+                <p class="text-2xl font-black text-gray-800">{{ escala.data|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <form method="POST" class="bg-white p-6 rounded-lg shadow-md">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Data do Serviço</label>
+                    <input type="date" name="data" value="{{ escala.data|date:'Y-m-d'|default:hoje }}" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Hora Início</label>
+                    <input type="time" name="hora_inicio" value="{{ escala.horario_inicio|time:'H:i'|default:'19:00' }}" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Hora Fim</label>
+                    <input type="time" name="hora_fim" value="{{ escala.horario_fim|time:'H:i'|default:'01:00' }}" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-700 uppercase text-xs">
+                            <th class="p-3">Ponto Fixo</th>
+                            <th class="p-3">Comandante</th>
+                            <th class="p-3">Motorista</th>
+                            <th class="p-3">Patrulheiro</th>
+                            <th class="p-3 text-right">Custo do Posto</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for item in dados_tabela %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-3 font-semibold text-gray-800">
+                                {{ item.ponto.nome }}
+                            </td>
+                            <td class="p-3">
+                                <select name="cmd_{{ item.ponto.id }}" class="w-full border rounded p-1.5 text-sm bg-white">
+                                    <option value="">-- Selecione --</option>
+                                    {% for pm in policiais %}
+                                    <option value="{{ pm.id }}" {% if item.cartao.comandante.id == pm.id %}selected{% endif %}>{{ pm.nome_guerra }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="p-3">
+                                <select name="mot_{{ item.ponto.id }}" class="w-full border rounded p-1.5 text-sm bg-white">
+                                    <option value="">-- Selecione --</option>
+                                    {% for pm in policiais %}
+                                    <option value="{{ pm.id }}" {% if item.cartao.motorista.id == pm.id %}selected{% endif %}>{{ pm.nome_guerra }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="p-3">
+                                <select name="pat_{{ item.ponto.id }}" class="w-full border rounded p-1.5 text-sm bg-white">
+                                    <option value="">-- Selecione --</option>
+                                    {% for pm in policiais %}
+                                    <option value="{{ pm.id }}" {% if item.cartao.patrulheiro.id == pm.id %}selected{% endif %}>{{ pm.nome_guerra }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="p-3 text-right font-mono text-sm text-gray-600">
+                                R$ {{ item.custo_cartao|floatformat:2 }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded shadow">
+                    Salvar e Calcular Escala
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
