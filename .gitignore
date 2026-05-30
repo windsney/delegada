@@ -1,0 +1,41 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+media/
+
+# Virtual environment
+venv/
+ENV/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node/Webpack
+node_modules/
+npm-debug.log*
+
+# Database
+*.sql
+*.sqlite
+*.sqlite3
+
+# Static files at collectstatic
+/staticfiles/
+
+# Environments
+.env
+.env.local
+.env.development
+.env.test
+.env.production
