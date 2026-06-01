@@ -5,6 +5,7 @@ urlpatterns = [
     path('painel', views.painel_escala, name='painel_escala'),
     path('', views.visualizacao_escala, name='visualizacao_escala'), # Nova rota
     path('militares/', views.cadastrar_policial, name='cadastrar_policial'),
+    path('relatorios/ponto-pdf/', views.gerar_pdf_fichas_ponto, name='gerar_pdf_fichas_ponto'),
     #path('sobre/', views.sobre, name='sobre'),
     #path('contato/', views.contato, name='contato'),
 # CBV básica
